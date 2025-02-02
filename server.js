@@ -15,8 +15,8 @@ const cors = require("cors")
  *   description: API for managing users and todos
  *   version: 1.0.0
  * servers:
- *   - url: http://localhost:3000
- *     description: Local server
+ *   - url: https://todo-backend-1-cvzs.onrender.com/
+ *     description: Live server
  */
 
 /**
@@ -68,5 +68,5 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   mongoDb();
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on https://todo-backend-1-cvzs.onrender.com/`);
 });
