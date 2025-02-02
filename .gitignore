@@ -1,0 +1,51 @@
+# Node Modules
+node_modules/
+
+# Environment Variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE and Editor settings
+.vscode/
+.idea/
+*.swp
+
+# Build files
+dist/
+build/
+
+# Dependency directories
+.bower_components/
+jspm_packages/
+
+# Coverage reports
+coverage/
+
+# Temporary files
+*.tmp
+*.bak
+*.temp
+*.old
+
+# Optional npm cache
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Debug tools
+.vscode/
+*.log
