@@ -38,7 +38,7 @@ const isAuthenticated = (req, res, next) => {
       return res.status(401).json({ error: "Unauthorized: Please Login First !" });
     }
 
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECERT_KEY);
     req.user = decoded;
     next();
   } catch (error) {
