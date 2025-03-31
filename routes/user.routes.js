@@ -35,14 +35,24 @@ userRouter.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT_ROUNDS));
+    // Check if email already exists
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: "User already exists" });
+    }
 
-    const user = await userModel.create({ email, password: hashedPassword });
+    // Ensure SALT_ROUNDS is set properly
+    const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const user = new userModel({ email, password: hashedPassword });
 
     await user.save();
-    res.status(201).json({ msg: "User added successfully...." });
+    res.status(201).json({ msg: "User registered successfully" });
+
   } catch (error) {
-    return res.status(400).json({ msg: "User not added..." });
+    console.error("Error during registration:", error);
+    return res.status(500).json({ msg: "Internal Server Error", error: error.message });
   }
 });
 
@@ -81,22 +91,31 @@ userRouter.post("/login", async (req, res) => {
   try {
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(404).send("User not found");
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (!user.password) {
+      return res.status(500).json({ msg: "User password is missing in the database" });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
-
     if (!isValidPassword) {
-      return res.status(401).send("Incorrect password");
+      return res.status(401).json({ msg: "Incorrect password" });
     }
 
-    const token = jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: "1h" });
+    if (!process.env.SECERT_KEY) {
+      console.error("SECRET_KEY is missing!");
+      return res.status(500).json({ msg: "Server configuration error" });
+    }
 
-    res.cookie("token", token);
-    res.send({ msg: "Login successful", token });
+    const token = jwt.sign({ email }, process.env.SECERT_KEY, { expiresIn: "1h" });
+
+    res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "Strict" });
+    res.json({ msg: "Login successful", token });
+
   } catch (error) {
     console.error("Error during login:", error);
-    return res.status(500).send("Internal Server Error");
+    return res.status(500).json({ msg: "Internal Server Error", error: error.message });
   }
 });
 
